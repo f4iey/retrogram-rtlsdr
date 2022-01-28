@@ -298,6 +298,7 @@ int main(int argc, char *argv[]){
     buffer = (uint8_t*)malloc(num_bins * 2 * sizeof(uint8_t));
     //for usb samples
     std::vector<float>  usbuff(num_bins);
+    std::vector<float>  iqbuff(num_bins);
 
     /* Reset endpoint before we start reading from it (mandatory) */
     verbose_reset_buffer(dev);
@@ -350,12 +351,12 @@ int main(int argc, char *argv[]){
         
         // Transformation de Hilbert
         for(int j = 0; j < (num_bins); j++){
-                  buff.at(j).real() = firminus45(buff.at(j).real());
-                  buff.at(j).imag() = firplus(buff.at(j).imag(), FIRCoefp30);
+                  iqbuff.push_back(firminus45(buff.at(j).real())); 
+                  iqbuff.push_back(firplus(buff.at(j).imag(), FIRCoefp30));
 	}
         // On somme I et Q pour obtenir de l'USB
         for(int j = 0; j < (num_bins); j++){
-                  usb = ((float)(buff.at(j).real() + buff.at(j).imag()));
+                  usb = ((float)(iqbuff.at(j) + iqbuff.at(j)));
                   usbuff.push_back(usb);
 	}
         // On joue le son
