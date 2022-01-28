@@ -34,6 +34,15 @@ Hacked from Ettus UHD RX ASCII Art DFT code - adapted for RTL SDR dongle.
 #include <thread>
 
 #include <rtl-sdr.h>
+//audio settings
+char sndcard[20];		// name of the soundcard i.e. "pulse", "hw:1,0" ...
+char wavfilename[300];	// name of the wavfile where the captured (and in opmode 'S' demodulated) data are stored
+char s_if[30];			// ZF frequency of the SDR radio as text
+int if_qrg = 20000;		// ZF frequency of the SDR radio as int
+char s_dur[30];			// duration for one capture, the program terminates after that time, as text
+int duration;			// duration as int
+char opmode = 'S';		// opmode: S...SDR mode includes USB demodulation, N...normal mode, just capturing
+char playback = 'P';	// playback: N...do not playback and don't init the soundcard for playback. P...do playback
 
 #define EXIT_ON_ERR false
 #define DISABLE_STDERR true
