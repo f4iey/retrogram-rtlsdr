@@ -35,7 +35,7 @@ Hacked from Ettus UHD RX ASCII Art DFT code - adapted for RTL SDR dongle.
 
 #include <rtl-sdr.h>
 //audio settings
-char sndcard[20];		// name of the soundcard i.e. "pulse", "hw:1,0" ...
+char sndcard[20] = "pulse";		// name of the soundcard i.e. "pulse", "hw:1,0" ...
 char wavfilename[300];	// name of the wavfile where the captured (and in opmode 'S' demodulated) data are stored
 char s_if[30];			// ZF frequency of the SDR radio as text
 int if_qrg = 20000;		// ZF frequency of the SDR radio as int
