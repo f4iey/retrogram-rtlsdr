@@ -214,7 +214,6 @@ int main(int argc, char *argv[]){
     int dev_index, rtl_inst, n_read;
 
     uint8_t *buffer;
-
     int num_bins = 512;
     double rate, freq, step, gain, ngain, frame_rate;
     float ref_lvl, dyn_rng;
@@ -296,6 +295,8 @@ int main(int argc, char *argv[]){
     std::vector<std::complex<float> > buff(num_bins);
 
     buffer = (uint8_t*)malloc(num_bins * 2 * sizeof(uint8_t));
+    //for usb samples
+    std::vector<float> > usbuff(num_bins);
 
     /* Reset endpoint before we start reading from it (mandatory) */
     verbose_reset_buffer(dev);
@@ -312,7 +313,7 @@ int main(int argc, char *argv[]){
     if (DISABLE_STDERR) freopen("/dev/null", "w", stderr);
 
 
-    float i,q;
+    float i,q,usb;
 
     //------------------------------------------------------------------
     //-- Main loop
@@ -323,6 +324,7 @@ int main(int argc, char *argv[]){
     while (loop){
 
         buff.clear();
+        usbuff.clear();
 
         rtl_inst = rtlsdr_read_sync(dev, buffer, num_bins * 2, &n_read);
         if (rtl_inst < 0)
@@ -344,6 +346,20 @@ int main(int argc, char *argv[]){
 
             buff.push_back(std::complex<float> ( i,  q ));
         }
+        
+        // Transformation de Hilbert
+        for(int j = 0; j < (num_bins); j++)
+                  buff.at(j).real() = firminus45(buff.at(j).real());
+                  buff.at(j).imag() = firplus45(buff.at(j).imag(), FIRCoefp30);
+        // On somme I et Q pour obtenir de l'USB
+        for(int j = 0; j < (num_bins); j++)
+                  usb = ((float)(buff.at(j).real() + buff.at(j).imag()));
+                  usbuff.push_back(usb);
+        // On joue le son
+        short samples[num_bits];
+        for(int j = 0; j < (num_bins); j++)
+                  samples[j] = (short)usbuff.at(j);
+        playsound(samples, num_bits);
 
         // Return early to save CPU if peak hold is disabled and no refresh is required.
         if (!peak_hold && high_resolution_clock::now() < next_refresh) {
