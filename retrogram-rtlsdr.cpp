@@ -348,13 +348,15 @@ int main(int argc, char *argv[]){
         }
         
         // Transformation de Hilbert
-        for(int j = 0; j < (num_bins); j++)
+        for(int j = 0; j < (num_bins); j++){
                   buff.at(j).real() = firminus45(buff.at(j).real());
                   buff.at(j).imag() = firplus45(buff.at(j).imag(), FIRCoefp30);
+	}
         // On somme I et Q pour obtenir de l'USB
-        for(int j = 0; j < (num_bins); j++)
+        for(int j = 0; j < (num_bins); j++){
                   usb = ((float)(buff.at(j).real() + buff.at(j).imag()));
                   usbuff.push_back(usb);
+	}
         // On joue le son
         short samples[num_bits];
         for(int j = 0; j < (num_bins); j++)
@@ -365,7 +367,6 @@ int main(int argc, char *argv[]){
         if (!peak_hold && high_resolution_clock::now() < next_refresh) {
             continue;
         }
-
         //calculate the dft and create the ascii art frame
         ascii_art_dft::log_pwr_dft_type lpdft(
             ascii_art_dft::log_pwr_dft(&buff.front(), buff.size())

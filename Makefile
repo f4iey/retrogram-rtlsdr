@@ -1,5 +1,5 @@
 TARGET = retrogram-rtlsdr
-LIBS = -lncurses -lboost_program_options -lrtlsdr
+LIBS = -lncurses -lboost_program_options -lrtlsdr -lsndfile -lm -lfftw3 -lasound
 CXX = g++
 CXXFLAGS = -g -Wall -std=c++11
 
@@ -8,7 +8,7 @@ CXXFLAGS = -g -Wall -std=c++11
 default: $(TARGET)
 all: default
 
-OBJECTS = retrogram-rtlsdr.cpp
+OBJECTS = retrogram-rtlsdr.cpp sound.cpp fir.cpp coeff.cpp meanvalue.cpp
 HEADERS = ascii_art_dft.hpp
 
 %.o: %.cpp $(HEADERS)
