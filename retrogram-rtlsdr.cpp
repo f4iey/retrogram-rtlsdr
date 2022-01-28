@@ -23,6 +23,7 @@ Hacked from Ettus UHD RX ASCII Art DFT code - adapted for RTL SDR dongle.
 
 
 #include "ascii_art_dft.hpp" //implementation
+#include "demod.h"
 #include <boost/program_options.hpp>
 #include <boost/format.hpp>
 #include <curses.h>
@@ -296,7 +297,7 @@ int main(int argc, char *argv[]){
 
     buffer = (uint8_t*)malloc(num_bins * 2 * sizeof(uint8_t));
     //for usb samples
-    std::vector<float> > usbuff(num_bins);
+    std::vector<float>  usbuff(num_bins);
 
     /* Reset endpoint before we start reading from it (mandatory) */
     verbose_reset_buffer(dev);
@@ -350,7 +351,7 @@ int main(int argc, char *argv[]){
         // Transformation de Hilbert
         for(int j = 0; j < (num_bins); j++){
                   buff.at(j).real() = firminus45(buff.at(j).real());
-                  buff.at(j).imag() = firplus45(buff.at(j).imag(), FIRCoefp30);
+                  buff.at(j).imag() = firplus(buff.at(j).imag(), FIRCoefp30);
 	}
         // On somme I et Q pour obtenir de l'USB
         for(int j = 0; j < (num_bins); j++){
@@ -358,10 +359,10 @@ int main(int argc, char *argv[]){
                   usbuff.push_back(usb);
 	}
         // On joue le son
-        short samples[num_bits];
+        short samples[num_bins];
         for(int j = 0; j < (num_bins); j++)
                   samples[j] = (short)usbuff.at(j);
-        playsound(samples, num_bits);
+        playsound(samples, num_bins);
 
         // Return early to save CPU if peak hold is disabled and no refresh is required.
         if (!peak_hold && high_resolution_clock::now() < next_refresh) {
