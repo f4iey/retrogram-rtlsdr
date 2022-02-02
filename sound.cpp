@@ -7,13 +7,8 @@ sound.cpp ... all routines for soundcard and wav-file
 #include "demod.h"
 #include <alsa/asoundlib.h>
 #include <sndfile.h>
-char sndcard[20];
-char wavfilename[300];
 float usbsamples[CAP_RATE];
 short samples12k[OUT_RATE];
-int if_qrg;
-char opmode;
-char playback;
 
 snd_pcm_t *capture_handle, *playback_handle;
 
